@@ -11,6 +11,8 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatMenuModule} from '@angular/material/menu';
+import { AngularFireModule } from '@angular/fire';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import {MatMenuModule} from '@angular/material/menu';
     MatSidenavModule,
     MatInputModule,
     MatSelectModule,
-    MatMenuModule
+    MatMenuModule,
+    AngularFireModule.initializeApp(environment.firebase)
   ],
   providers: [],
   bootstrap: [AppComponent]
