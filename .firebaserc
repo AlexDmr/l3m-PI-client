@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "proj-l3m-2020-2021": {
+      "hosting": {
+        "amorce-client": [
+          "proj-l3m-2020-2021"
+        ]
+      }
+    }
+  }
+}
