@@ -6,18 +6,19 @@
     Projet intégrateur
   </label>
   <label class="spacer"></label>
-  <mat-icon [matMenuTriggerFor]="menuConnect">
+  <mat-icon [matMenuTriggerFor]="menuConnect" *ngIf="!(auth.user | async)">
     account_circle
   </mat-icon>
+  <img *ngIf="auth.user | async as U" [src]="U.photoURL" [matMenuTriggerFor]="menuDisconnect" />
   <mat-menu #menuConnect="matMenu">
-    <button mat-menu-item>
+    <button mat-menu-item (click)="login()">
       <img [src]="dataIconGoogle" width="24" height="24"/>
       &nbsp;
       <span>Compte Google</span>
     </button>
   </mat-menu>
   <mat-menu #menuDisconnect="matMenu">
-    <button mat-menu-item>
+    <button mat-menu-item (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span>Déconnexion</span>
     </button>
@@ -37,5 +38,10 @@
         <mat-option value="push">Push</mat-option>
       </mat-select>
     </mat-form-field>
+
+    <yaga-map [lng]="5.724524" [lat]="45.188529" [zoom]="12">
+      <yaga-tile-layer [(url)]="tileLayerUrl"></yaga-tile-layer>
+    </yaga-map>
+
   </mat-drawer-content>
 </mat-drawer-container>

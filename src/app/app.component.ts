@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import firebase from 'firebase/app';
+import { OSM_TILE_LAYER_URL } from '@yaga/leaflet-ng2';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,7 @@ import firebase from 'firebase/app';
 })
 export class AppComponent {
   dataIconGoogle = 'assets/images/iconGoogle.png';
+  tileLayerUrl: string = OSM_TILE_LAYER_URL;
 
   constructor(public auth: AngularFireAuth) {
   }
