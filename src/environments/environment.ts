@@ -11,7 +11,8 @@ export const environment = {
     storageBucket: 'proj-l3m-2020-2021.appspot.com',
     messagingSenderId: '423016891702',
     appId: '1:423016891702:web:7c703698540cc7f8469f97'
-  }
+  },
+  serveurMetierURL: 'http://localhost:5000'
 };
 
 /*

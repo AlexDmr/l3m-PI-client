@@ -43,5 +43,9 @@
       <yaga-tile-layer [(url)]="tileLayerUrl"></yaga-tile-layer>
     </yaga-map>
 
+    <button (click)="query()">QUERY</button>
+    <pre>
+      {{ userToken | async }}
+    </pre>
   </mat-drawer-content>
 </mat-drawer-container>
