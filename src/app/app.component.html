@@ -39,9 +39,12 @@
       </mat-select>
     </mat-form-field>
 
-    <yaga-map [lng]="5.724524" [lat]="45.188529" [zoom]="12">
-      <yaga-tile-layer [(url)]="tileLayerUrl"></yaga-tile-layer>
-    </yaga-map>
+    <div  style="height: 600px;"
+          leaflet
+          [leafletOptions] = "options"
+          >
+          <div *ngFor="let ligne of layers | async" [leafletLayer]="ligne"></div>
+    </div>
 
     <button (click)="query()">QUERY</button>
     <pre>

@@ -14,7 +14,8 @@ import {MatMenuModule} from '@angular/material/menu';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment';
-import { YagaModule } from '@yaga/leaflet-ng2';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { YagaModule } from '@yaga/leaflet-ng2';
     MatMenuModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
-    YagaModule
+    LeafletModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
