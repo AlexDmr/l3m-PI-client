@@ -16,10 +16,17 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { HttpClientModule } from '@angular/common/http';
+import { ProfilComponent } from './profil/profil.component';
+import { MainComponent } from './main/main.component';
+import {MatListModule} from '@angular/material/list';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ProfilComponent,
+    MainComponent
   ],
   imports: [
     BrowserModule,
@@ -32,6 +39,8 @@ import { HttpClientModule } from '@angular/common/http';
     MatInputModule,
     MatSelectModule,
     MatMenuModule,
+    MatListModule,
+    MatButtonToggleModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     LeafletModule,

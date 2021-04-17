@@ -1,17 +1,17 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { combineLatest, merge, Observable, Subject } from 'rxjs';
-import { filter, map, mergeMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, merge, Observable, Subject } from 'rxjs';
+import { filter, map, mergeMap, multicast, refCount, tap } from 'rxjs/operators';
 import firebase from 'firebase/app';
 import { environment } from 'src/environments/environment';
 
-interface Chami {
+export interface Chami {
   login: string;
   age: number;
 }
 
-interface User {
+export interface User {
   uAuth: firebase.User;
   chami: Chami | undefined;
 }
@@ -37,8 +37,12 @@ export class ChamiService {
       }),
       mergeMap( async (u: firebase.User) => {
         const login = u.email;
-        const R = await this.http.get<Chami>( `${url}/api/users/${login}`, {observe: 'response'} ).toPromise();
-        return R.status === 200 ? (R.body ?? undefined) : undefined;
+        try {
+          const R = await this.get<Chami>(`${url}/api/chamis/${login}`);
+          return R.status === 200 ? (R.body ?? undefined) : undefined;
+        } catch (err) {
+          return undefined;
+        }
       })
     );
 
@@ -51,15 +55,29 @@ export class ChamiService {
         } else {
           return {uAuth, chami};
         }
-      } )
+      } ),
+      multicast( () => new BehaviorSubject<User | undefined>(undefined) ),
+      refCount()
     );
   }
 
   async updateChami(login: string, chami: Chami): Promise<Chami | null> {
     const url = environment.serveurMetierURL;
-    const R = await this.put<Chami>( `${url}/api/users/${login}`, chami );
+    const R = await this.put<Chami>( `${url}/api/chamis/${login}`, chami );
     this.chamiSubj.next( R.status === 200 ? R.body as Chami : undefined );
     return R.body;
+  }
+
+  login(): void {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    });
+    this.auth.signInWithPopup(provider);
+  }
+
+  logout(): void {
+    this.auth.signOut();
   }
 
   private async get<T>(url: string): Promise<HttpResponse<T>> {

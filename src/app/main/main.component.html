@@ -1,0 +1,6 @@
+<div  style="height: 600px;"
+      leaflet
+      [leafletOptions] = "options"
+      >
+  <div *ngFor="let ligne of layers | async" [leafletLayer] = "ligne"></div>
+</div>

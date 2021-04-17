@@ -1,54 +1,68 @@
-<mat-toolbar>
-  <button mat-icon-button class="example-icon" aria-label="Menu">
-    <mat-icon (click)="drawer.toggle()">menu</mat-icon>
-  </button>
-  <label>
-    Projet intégrateur
-  </label>
-  <label class="spacer"></label>
-  <mat-icon [matMenuTriggerFor]="menuConnect" *ngIf="!(auth.user | async)">
-    account_circle
-  </mat-icon>
-  <img *ngIf="auth.user | async as U" [src]="U.photoURL" [matMenuTriggerFor]="menuDisconnect" />
-  <mat-menu #menuConnect="matMenu">
-    <button mat-menu-item (click)="login()">
-      <img [src]="dataIconGoogle" width="24" height="24"/>
-      &nbsp;
-      <span>Compte Google</span>
+<div *ngIf = "state | async as S" class="root">
+  <mat-toolbar>
+    <button mat-icon-button class="example-icon" aria-label="Menu">
+      <mat-icon (click)="drawer.toggle()" color="primary">menu</mat-icon>
     </button>
-  </mat-menu>
-  <mat-menu #menuDisconnect="matMenu">
-    <button mat-menu-item (click)="logout()">
-      <mat-icon>logout</mat-icon>
-      <span>Déconnexion</span>
-    </button>
-  </mat-menu>
-</mat-toolbar>
+    <label> Projet intégrateur </label>
+    <label class="spacer"></label>
+    <mat-icon
+      *ngIf="!S.user"
+      [matMenuTriggerFor]="menuNotLogged"
+      color="primary"
+      class="iconAccount"
+    >
+      account_circle
+    </mat-icon>
+    <img
+      *ngIf="S.user as U"
+      [src]="U.uAuth.photoURL"
+      [matMenuTriggerFor]="menuLogged"
+      class="iconAccount"
+    />
+    <mat-menu #menuNotLogged="matMenu">
+      <button mat-menu-item (click)="login()">
+        <img [src]="dataIconGoogle" width="24" height="24" />
+        &nbsp;
+        <span>Compte Google</span>
+      </button>
+    </mat-menu>
+    <mat-menu #menuLogged="matMenu">
+      <div *ngIf="S.user as U">
+        <button mat-menu-item>
+          <mat-icon [color]="U.chami ? 'primary' : 'warn'">{{
+            !U.chami ? "warning" : "account_box"
+          }}</mat-icon>
+          <a routerLink="profil" routerLinkActive="active">Profil</a>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Déconnexion</span>
+        </button>
+      </div>
+    </mat-menu>
+  </mat-toolbar>
 
-<mat-drawer-container class="example-container">
-  <mat-drawer #drawer [mode]="mode.value">
-    Placez votre menu ici...
-  </mat-drawer>
-  <mat-drawer-content>
-    <mat-form-field>
-      <mat-label>Sidenav mode</mat-label>
-      <mat-select #mode value="push">
-        <mat-option value="side">Side</mat-option>
-        <mat-option value="over">Over</mat-option>
-        <mat-option value="push">Push</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <div  style="height: 600px;"
-          leaflet
-          [leafletOptions] = "options"
-          >
-          <div *ngFor="let ligne of layers | async" [leafletLayer]="ligne"></div>
-    </div>
-
-    <button (click)="query()">QUERY</button>
-    <pre>
-      {{ userToken | async }}
-    </pre>
-  </mat-drawer-content>
-</mat-drawer-container>
+  <mat-drawer-container class="example-container">
+    <mat-drawer #drawer mode="push">
+      <mat-selection-list [multiple] = "false" (selectionChange)="changeRoute($event)">
+        <mat-list-option value="profil" [disabled]="!S.user" [selected]="S.route === 'profil'">
+          <button mat-menu-item>
+            <mat-icon [color]="S.user?.chami ? 'primary' : 'warn'">{{
+              !S.user?.chami ? "warning" : "account_box"
+            }}</mat-icon>
+            <label>Profil</label>
+          </button>
+        </mat-list-option>
+        <mat-list-option value="" [selected]="S.route === ''">
+          <button mat-menu-item>
+            <mat-icon color="primary">map</mat-icon>
+            <label>Cartographe</label>
+          </button>
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-drawer>
+    <mat-drawer-content>
+      <router-outlet></router-outlet>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>

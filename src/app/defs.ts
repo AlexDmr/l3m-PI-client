@@ -1,5 +1,4 @@
 import {Feature, FeatureCollection} from 'geojson';
-import { LatLngTuple } from 'leaflet';
 
 export interface FeatureLigne extends Feature {
   // type: 'Feature';
@@ -27,4 +26,4 @@ export interface GeometryMultiLineString {
   coordinates: GeoPoint[][];
 }
 
-export type GeoPoint = LatLngTuple; // number[];
+export type GeoPoint = [lng: number, lat: number];

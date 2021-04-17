@@ -3,12 +3,18 @@
   flex-flow: column;
   height: 100%;
 
+  > div.root {
+    flex: 1 1;
+    display: flex;
+    flex-flow: column;
+  }
+
   mat-toolbar {
-    > mat-icon {
+    > .iconAccount {
       user-select: none;
-      transition: transform .3s;
+      transition: transform 0.3s;
     }
-    > mat-icon:hover {
+    > .iconAccount:hover {
       transform: scale(1.4);
     }
 
@@ -22,13 +28,17 @@
 
   mat-drawer-container {
     flex: 1 1;
+
     > mat-drawer {
       border-right: solid grey 3px;
+
+      mat-list-option.mat-list-item-disabled {
+        background-color: lightgrey;
+      }
+
+      mat-list-option.mat-list-single-selected-option {
+        background-color: lightgreen;
+      }
     }
-  }
-
-
-  yaga-map {
-    height: 480px;
   }
 }
