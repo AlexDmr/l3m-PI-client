@@ -8,7 +8,16 @@ import { environment } from 'src/environments/environment';
 
 export interface Chami {
   login: string;
-  age: number;
+  naissance: Date;
+  description: string;
+}
+
+export function fakeChami(): Chami {
+  return {
+    login: '',
+    naissance: new Date(0),
+    description: ''
+  };
 }
 
 export interface User {
@@ -22,17 +31,17 @@ export interface User {
 export class ChamiService {
   private chamiSubj = new Subject<Chami>();
   readonly user: Observable<User | undefined>;
-  private jwt = '';
+  private fbu: firebase.User | undefined = undefined;
 
   constructor(private http: HttpClient, private auth: AngularFireAuth) {
     const url = environment.serveurMetierURL;
     const U = auth.user;
     const C: Observable<Chami | undefined> = U.pipe(
-      tap( () => this.jwt = '' ),
+      tap( () => this.fbu = undefined ),
       filter( u => !!u),
       map( u => u as firebase.User ),
       mergeMap( async u => {
-        this.jwt = await u.getIdToken();
+        this.fbu = u;
         return u;
       }),
       mergeMap( async (u: firebase.User) => {
@@ -61,6 +70,13 @@ export class ChamiService {
     );
   }
 
+  async createChami(login: string, chami: Chami): Promise<Chami | null> {
+    const url = environment.serveurMetierURL;
+    const R = await this.post<Chami>( `${url}/api/chamis/${login}`, chami );
+    this.chamiSubj.next( R.status === 200 ? R.body as Chami : undefined );
+    return R.body;
+  }
+
   async updateChami(login: string, chami: Chami): Promise<Chami | null> {
     const url = environment.serveurMetierURL;
     const R = await this.put<Chami>( `${url}/api/chamis/${login}`, chami );
@@ -80,19 +96,23 @@ export class ChamiService {
     this.auth.signOut();
   }
 
+  private get jwt(): Promise<string> {
+    return this.fbu ? this.fbu.getIdToken() : Promise.resolve('');
+  }
+
   private async get<T>(url: string): Promise<HttpResponse<T>> {
-    return this.http.get<T>( url, {observe: 'response', headers: {Authorization: this.jwt}} ).toPromise();
+    return this.http.get<T>( url, {observe: 'response', headers: {Authorization: await this.jwt}} ).toPromise();
   }
 
   private async post<T>(url: string, body: object): Promise<HttpResponse<T>> {
-    return this.http.post<T>( url, body, {observe: 'response', headers: {Authorization: this.jwt}} ).toPromise();
+    return this.http.post<T>( url, body, {observe: 'response', headers: {Authorization: await this.jwt}} ).toPromise();
   }
 
   private async put<T>(url: string, body: object): Promise<HttpResponse<T>> {
-    return this.http.put<T>( url, body, {observe: 'response', headers: {Authorization: this.jwt}} ).toPromise();
+    return this.http.put<T>( url, body, {observe: 'response', headers: {Authorization: await this.jwt}} ).toPromise();
   }
 
   private async delete<T>(url: string): Promise<HttpResponse<T>> {
-    return this.http.delete<T>( url, {observe: 'response', headers: {Authorization: this.jwt}} ).toPromise();
+    return this.http.delete<T>( url, {observe: 'response', headers: {Authorization: await this.jwt}} ).toPromise();
   }
 }

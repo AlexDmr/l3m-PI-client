@@ -1,1 +1,28 @@
-<p>profil works!</p>
+<form
+    *ngIf="cs.user | async as U"
+    (ngSubmit)="update(U.uAuth.email || U.uAuth.uid)"
+    >
+  <label>Login : {{chami.login}}</label>
+  <mat-form-field class="example-full-width">
+    <mat-label>Votre date de naissance</mat-label>
+    <input matInput [matDatepicker]="picker" name="naissance" [(ngModel)]="chami.naissance"/>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Une description</mat-label>
+    <textarea
+      matInput name="description"
+      [(ngModel)] = "chami.description"
+      placeholder="Je suis chami parceque..."
+      ></textarea>
+  </mat-form-field>
+
+  <hr/>
+  <footer>
+    <button mat-raised-button color="primary">
+      Mettre à jour
+    </button>
+  </footer>
+</form>

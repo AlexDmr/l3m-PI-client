@@ -20,7 +20,22 @@ import { ProfilComponent } from './profil/profil.component';
 import { MainComponent } from './main/main.component';
 import {MatListModule} from '@angular/material/list';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { FormsModule } from '@angular/forms';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { DateAdapter, MatNativeDateModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'LL',
+  },
+  display: {
+    dateInput: 'YYYY-MM-DD',
+    monthYearLabel: 'YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'YYYY',
+  },
+};
 
 @NgModule({
   declarations: [
@@ -30,6 +45,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatToolbarModule,
@@ -41,12 +57,20 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     MatMenuModule,
     MatListModule,
     MatButtonToggleModule,
-    AngularFireModule.initializeApp(environment.firebase),
+    MatDatepickerModule,
+    MatNativeDateModule ,
     AngularFireAuthModule,
+    AngularFireStorageModule,
+    AngularFireModule.initializeApp(environment.firebase),
     LeafletModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    // {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+    {provide: MAT_DATE_LOCALE, useValue: 'fr-FR'},
+    // MatDatepickerModule
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

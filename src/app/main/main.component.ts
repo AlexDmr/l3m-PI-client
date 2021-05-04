@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { latLng, LatLngTuple, Layer, MapOptions, polyline, tileLayer } from 'leaflet';
-import { Observable } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { FeatureLigneCollection } from '../defs';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Component({
   templateUrl: './main.component.html',
@@ -11,6 +11,7 @@ import { FeatureLigneCollection } from '../defs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainComponent implements OnInit {
+  upFile = '';
   iconMarker = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Map_marker.svg/585px-Map_marker.svg.png';
   options: MapOptions = {
       layers: [
@@ -22,7 +23,7 @@ export class MainComponent implements OnInit {
   private layersSubj = new BehaviorSubject<Layer[]>([]);
   readonly layers: Observable<Layer[]> = this.layersSubj.asObservable();
 
-  constructor(http: HttpClient) {
+  constructor(http: HttpClient, private storage: AngularFireStorage) {
     http.get<FeatureLigneCollection>('https://data.metromobilite.fr/api/lines/json?types=ligne').subscribe( flc => {
       const layers: Layer[] = flc.features.reduce( (L, fl) => {
         if (fl.geometry.type === 'MultiLineString') {
@@ -40,6 +41,20 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  async send(evt: Event): Promise<void> {
+    console.log('send', this.upFile);
+    const Lf = (evt.target as EventTarget & HTMLInputElement)?.files;
+    if (Lf && Lf.length > 0) {
+      const file = Lf[0];
+      const filePath = 'testFile';
+      const task = this.storage.upload(filePath, file);
+      task.then(
+        r => console.log  ('OK!', r),
+        e => console.error('err', e)
+      );
+    }
   }
 
 }
